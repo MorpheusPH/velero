@@ -49,6 +49,11 @@ func (c *Command) StringSlice() []string {
 	res := []string{"restic"}
 
 	res = append(res, c.Command, repoFlag(c.RepoIdentifier))
+
+	if UseV1 := os.Getenv("S3_LIST_OBJECTS_V1"); UseV1 == "true" {
+		res = append(res, resticUseV1Option())
+	}
+
 	if c.PasswordFile != "" {
 		res = append(res, passwordFlag(c.PasswordFile))
 	}
@@ -101,4 +106,8 @@ func cacheDirFlag(dir string) string {
 
 func cacertFlag(path string) string {
 	return fmt.Sprintf("--cacert=%s", path)
+}
+
+func resticUseV1Option() string {
+	return "-o s3.list-objects-v1=true"
 }
